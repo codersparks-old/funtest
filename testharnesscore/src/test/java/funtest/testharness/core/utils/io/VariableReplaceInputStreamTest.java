@@ -86,7 +86,7 @@ public class VariableReplaceInputStreamTest {
 	@Test
 	public void nonVariableReplaceTest() throws IOException {
 		String testString = "${var3}";
-		String expectedString = "${var3}";
+		String expectedString = "${var3}4";
 		
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(testString.getBytes());
 		VariableReplaceInputStream varReplaceInputStrem = new VariableReplaceInputStream(inputStream, testProperties);
