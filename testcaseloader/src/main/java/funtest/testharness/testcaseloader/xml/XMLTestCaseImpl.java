@@ -26,7 +26,7 @@ import org.w3c.dom.NodeList;
 import funtest.testharness.core.TestHarness;
 import funtest.testharness.core.exception.TestHarnessException;
 import funtest.testharness.core.testcase.TestCase;
-import funtest.testharness.core.teststep.TestStep;
+import funtest.testharness.core.teststep.AbstractTestStep;
 
 public class XMLTestCaseImpl implements TestCase {
 
@@ -66,9 +66,9 @@ public class XMLTestCaseImpl implements TestCase {
 	}
 
 	@Override
-	public Iterator<TestStep> iterator() {
+	public Iterator<AbstractTestStep> iterator() {
 		// TODO Auto-generated method stub
-		return new Iterator<TestStep>() {
+		return new Iterator<AbstractTestStep>() {
 
 			int index = 0;
 
@@ -86,9 +86,9 @@ public class XMLTestCaseImpl implements TestCase {
 			}
 
 			@Override
-			public TestStep next() {
+			public AbstractTestStep next() {
 
-				TestStep testStep;
+				AbstractTestStep testStep;
 
 				try {
 
@@ -137,8 +137,8 @@ public class XMLTestCaseImpl implements TestCase {
 					
 					
 
-					if (TestStep.class.isAssignableFrom(clazz)) {
-						testStep = (TestStep) clazz.getDeclaredConstructor(
+					if (AbstractTestStep.class.isAssignableFrom(clazz)) {
+						testStep = (AbstractTestStep) clazz.getDeclaredConstructor(
 								String.class, Properties.class,
 								TestHarness.class).newInstance(aliasString,
 								testStepProperties, testHarness);
@@ -192,11 +192,11 @@ public class XMLTestCaseImpl implements TestCase {
 
 	private void initialise() throws TestHarnessException {
 
-		String scriptsBaseDirectory = testHarness
+		String scriptsBaseDirectory = testHarness.getContext()
 				.getEnvironmentProperty("scriptsDir");
 		//String schemaLocation = testHarness
 		//		.getEnvironmentProperty("schemaLocation");
-		String workingDirectory = testHarness
+		String workingDirectory = testHarness.getContext()
 				.getEnvironmentProperty("workingDir");
 
 		if (scriptsBaseDirectory == null) {

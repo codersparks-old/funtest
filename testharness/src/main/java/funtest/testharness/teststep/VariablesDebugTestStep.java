@@ -3,12 +3,12 @@ package funtest.testharness.teststep;
 import java.io.IOException;
 import java.util.Properties;
 
-import funtest.testharness.core.TestHarness;
+import funtest.testharness.core.TestHarnessContext;
 import funtest.testharness.core.result.TestResult;
-import funtest.testharness.core.teststep.TestStep;
+import funtest.testharness.core.teststep.AbstractTestStep;
 
 /**
- * An implementation of {@link TestStep} that will print out the print out the
+ * An implementation of {@link AbstractTestStep} that will print out the print out the
  * value of the specified variable or all variables if one is not specified
  * 
  * <p>
@@ -36,18 +36,18 @@ import funtest.testharness.core.teststep.TestStep;
  * @author codersparks
  * 
  */
-public class VariablesDebugTestStep extends TestStep {
+public class VariablesDebugTestStep extends AbstractTestStep {
 
 	public VariablesDebugTestStep(String alias, Properties testStepProperties,
-			TestHarness testHarness) {
-		super(alias, testStepProperties, testHarness);
+			TestHarnessContext context) {
+		super(alias, testStepProperties, context);
 
 	}
 
 	@Override
 	public TestResult runTestStep() {
 
-		Properties harnessVariables = this.testHarness.getVariables();
+		Properties harnessVariables = this.context.getTestHarness().getVariables();
 
 		String variableName;
 		

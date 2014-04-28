@@ -2,9 +2,9 @@ package funtest.testharness.teststep;
 
 import java.util.Properties;
 
-import funtest.testharness.core.TestHarness;
+import funtest.testharness.core.TestHarnessContext;
 import funtest.testharness.core.result.TestResult;
-import funtest.testharness.core.teststep.TestStep;
+import funtest.testharness.core.teststep.AbstractTestStep;
 
 /**
  * Delegate test step is designed to delegate control to another test case
@@ -34,11 +34,11 @@ import funtest.testharness.core.teststep.TestStep;
  * @author codersparks
  * 
  */
-public class DelegateTestStep extends TestStep {
+public class DelegateTestStep extends AbstractTestStep {
 
 	public DelegateTestStep(String alias, Properties testStepProperties,
-			TestHarness testHarness) {
-		super(alias, testStepProperties, testHarness);
+			TestHarnessContext context) {
+		super(alias, testStepProperties, context);
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class DelegateTestStep extends TestStep {
 			
 			String testCaseLoader = this.getProperty("testcaseloader");
 			
-			this.testHarness.delegateToTestCase(testCaseName, testCaseLoader);
+			this.context.getTestHarness().delegateToTestCase(testCaseName, testCaseLoader);
 			
 			// no errors raised so we pass this test step
 			this.testResult.logPass("No errors occured whilst loading delegated test case: " + testCaseName);

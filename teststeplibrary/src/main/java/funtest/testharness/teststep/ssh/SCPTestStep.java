@@ -5,22 +5,22 @@ import java.io.IOException;
 import java.util.Properties;
 
 import funtest.helperlibrary.helper.ssh.SCPHelper;
-import funtest.testharness.core.TestHarness;
+import funtest.testharness.core.TestHarnessContext;
 import funtest.testharness.core.result.TestResult;
-import funtest.testharness.core.teststep.TestStep;
+import funtest.testharness.core.teststep.AbstractTestStep;
 
 /**
- * Implementaion of the {@link TestStep} abstract class to copy a file from a
+ * Implementaion of the {@link AbstractTestStep} abstract class to copy a file from a
  * remote server
  * 
  * @author codersparks
  * 
  */
-public class SCPTestStep extends TestStep {
+public class SCPTestStep extends AbstractTestStep {
 
 	public SCPTestStep(String alias, Properties testStepProperties,
-			TestHarness testHarness) {
-		super(alias, testStepProperties, testHarness);
+			TestHarnessContext context) {
+		super(alias, testStepProperties, context);
 	}
 
 	/**
@@ -51,9 +51,9 @@ public class SCPTestStep extends TestStep {
 			this.testResult.logMessage("Remote File: " + remoteFile);
 			String destination = this.getProperty("destination");
 			if (destination == null || destination.length() < 1) {
-				String workingDir = testHarness
+				String workingDir = context
 						.getEnvironmentProperty("workingDir");
-				String testCaseName = testHarness.getTestCaseName();
+				String testCaseName = context.getTestCaseName();
 
 				destination = workingDir + "/" + testCaseName;
 

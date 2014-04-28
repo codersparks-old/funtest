@@ -10,11 +10,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import funtest.testharness.core.TestHarness;
+import funtest.testharness.core.TestHarnessContext;
 import funtest.testharness.core.exception.TestHarnessException;
 import funtest.testharness.core.outputter.OutputAdapter;
 import funtest.testharness.core.result.TestResult;
 import funtest.testharness.core.testcase.TestCase;
 import funtest.testharness.core.testcase.TestCaseLoader;
+import funtest.testharness.core.teststep.AbstractTestStep;
 import funtest.testharness.core.teststep.TestStep;
 
 /**
@@ -32,10 +34,10 @@ public class TestHarnessImpl implements TestHarness {
 	private TestCaseLoader testCaseLoader;
 	private List<OutputAdapter> outputAdaptors;
 	private Properties variables;
-	private Properties environmentProperties;
+	private TestHarnessContext context;
+	//private Properties environmentProperties;
 	private TestCase testCase;
-	private String testCaseName;
-	private Stack<Iterator<TestStep>> iteratorStack;
+	private Stack<Iterator<AbstractTestStep>> iteratorStack;
 
 	/**
 	 * Constructor for the test harness class
@@ -64,12 +66,13 @@ public class TestHarnessImpl implements TestHarness {
 						+ this.variables.getProperty(name));
 			}
 		}
-		this.environmentProperties = environmentProperties;
+		this.context = new TestHarnessContext();
+		this.context.setEnvironmentalProperties(environmentProperties);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Environment properties set to: ");
-			for (String name : this.environmentProperties.stringPropertyNames()) {
+			for (String name : this.context.getEnvironmentProperties().stringPropertyNames()) {
 				logger.debug("\t=> " + name + ": "
-						+ this.environmentProperties.getProperty(name));
+						+ this.context.getEnvironmentProperty(name));
 			}
 		}
 		logger.info("Construction of TestHarness complete.");
@@ -88,10 +91,10 @@ public class TestHarnessImpl implements TestHarness {
 	public void loadTestCase(String testCaseName) throws TestHarnessException {
 
 		logger.info("Loading testcase: " + testCaseName);
-		this.testCaseName = testCaseName;
+		this.context.setTestCaseName(testCaseName);
 		this.testCase = this.testCaseLoader.loadTestCase(testCaseName, this);
 		// We use a stack to allow delegation
-		iteratorStack = new Stack<Iterator<TestStep>>();
+		iteratorStack = new Stack<Iterator<AbstractTestStep>>();
 		iteratorStack.push(this.testCase.iterator());
 
 		logger.debug("Loaded testcase: " + this.testCase.getTestCaseName());
@@ -109,9 +112,11 @@ public class TestHarnessImpl implements TestHarness {
 	public boolean runTests() {
 		logger.info("Running test steps");
 
-		Iterator<TestStep> currentTestStepIterator;
+		Iterator<AbstractTestStep> currentTestStepIterator;
 		
-		String continueOnFailureProperty = this.getEnvironmentProperty("continueonfailure");
+		
+		
+		String continueOnFailureProperty = context.getEnvironmentProperty("continueonfailure");
 		boolean continueOnFailure = Boolean.parseBoolean(continueOnFailureProperty);
 
 		while (!iteratorStack.empty()) {
@@ -242,7 +247,7 @@ public class TestHarnessImpl implements TestHarness {
 	 */
 	@Override
 	public void setEnvironmentProperty(String propertyName, String propertyValue) {
-		this.environmentProperties.setProperty(propertyName, propertyValue);
+		this.context.setEnvironmentalProperty(propertyName, propertyValue);
 	}
 
 	/*
@@ -256,8 +261,8 @@ public class TestHarnessImpl implements TestHarness {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getEnvironmentProperty(String propertyName) {
-		return this.environmentProperties.getProperty(propertyName);
+	public TestHarnessContext getContext() {
+		return this.context;
 	}
 
 	/*
@@ -299,7 +304,7 @@ public class TestHarnessImpl implements TestHarness {
 	 */
 	@Override
 	public String getTestCaseName() {
-		return testCaseName;
+		return this.context.getTestCaseName();
 	}
 
 	/*

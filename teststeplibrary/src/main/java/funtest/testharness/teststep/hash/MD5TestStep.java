@@ -6,22 +6,22 @@ import java.io.IOException;
 import java.util.Properties;
 
 import funtest.helperlibrary.helper.hash.FileHashHelper;
-import funtest.testharness.core.TestHarness;
+import funtest.testharness.core.TestHarnessContext;
 import funtest.testharness.core.result.TestResult;
-import funtest.testharness.core.teststep.TestStep;
+import funtest.testharness.core.teststep.AbstractTestStep;
 
 /**
- * Implementaion of the {@link TestStep} abstract class to validate the hashing
+ * Implementaion of the {@link AbstractTestStep} abstract class to validate the hashing
  * of a file
  * 
  * @author codersparks
  * 
  */
-public class MD5TestStep extends TestStep {
+public class MD5TestStep extends AbstractTestStep {
 
 	public MD5TestStep(String alias, Properties testStepProperties,
-			TestHarness testHarness) {
-		super(alias, testStepProperties, testHarness);
+			TestHarnessContext context) {
+		super(alias, testStepProperties, context);
 	}
 
 	/**
@@ -42,10 +42,10 @@ public class MD5TestStep extends TestStep {
 			File file = new File(filename);
 
 			if (!file.isAbsolute()) {
-				String workingFile = testHarness
+				String workingFile = context
 						.getEnvironmentProperty("workingDir")
 						+ "/"
-						+ testHarness.getTestCaseName();
+						+ context.getTestCaseName();
 
 				File tempFile = new File(workingFile, file.getPath());
 				file = tempFile;

@@ -67,11 +67,10 @@ public interface TestHarness {
 			String propertyValue);
 
 	/**
-	 * Get the value of the specified property
-	 * @param propertyName The property to get
-	 * @return The value of the property
+	 * Get the {@link TestHarnessContext} 
+	 * @return The context for the harness
 	 */
-	public abstract String getEnvironmentProperty(String propertyName);
+	public abstract TestHarnessContext getContext();
 
 	/**
 	 * Add the specified outputter to be used in outputting results
