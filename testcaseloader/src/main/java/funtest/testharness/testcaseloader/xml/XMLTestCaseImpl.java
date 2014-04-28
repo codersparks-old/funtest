@@ -26,7 +26,7 @@ import org.w3c.dom.NodeList;
 import funtest.testharness.core.TestHarness;
 import funtest.testharness.core.exception.TestHarnessException;
 import funtest.testharness.core.testcase.TestCase;
-import funtest.testharness.core.teststep.AbstractTestStep;
+import funtest.testharness.core.teststep.TestStep;
 
 public class XMLTestCaseImpl implements TestCase {
 
@@ -66,9 +66,9 @@ public class XMLTestCaseImpl implements TestCase {
 	}
 
 	@Override
-	public Iterator<AbstractTestStep> iterator() {
-		// TODO Auto-generated method stub
-		return new Iterator<AbstractTestStep>() {
+	public Iterator<TestStep> iterator() {
+		
+		return new Iterator<TestStep>() {
 
 			int index = 0;
 
@@ -86,9 +86,9 @@ public class XMLTestCaseImpl implements TestCase {
 			}
 
 			@Override
-			public AbstractTestStep next() {
+			public TestStep next() {
 
-				AbstractTestStep testStep;
+				TestStep testStep;
 
 				try {
 
@@ -137,8 +137,8 @@ public class XMLTestCaseImpl implements TestCase {
 					
 					
 
-					if (AbstractTestStep.class.isAssignableFrom(clazz)) {
-						testStep = (AbstractTestStep) clazz.getDeclaredConstructor(
+					if (TestStep.class.isAssignableFrom(clazz)) {
+						testStep = (TestStep) clazz.getDeclaredConstructor(
 								String.class, Properties.class,
 								TestHarness.class).newInstance(aliasString,
 								testStepProperties, testHarness);

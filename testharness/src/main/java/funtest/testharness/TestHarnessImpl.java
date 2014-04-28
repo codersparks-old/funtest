@@ -16,7 +16,6 @@ import funtest.testharness.core.outputter.OutputAdapter;
 import funtest.testharness.core.result.TestResult;
 import funtest.testharness.core.testcase.TestCase;
 import funtest.testharness.core.testcase.TestCaseLoader;
-import funtest.testharness.core.teststep.AbstractTestStep;
 import funtest.testharness.core.teststep.TestStep;
 
 /**
@@ -37,7 +36,7 @@ public class TestHarnessImpl implements TestHarness {
 	private TestHarnessContext context;
 	//private Properties environmentProperties;
 	private TestCase testCase;
-	private Stack<Iterator<AbstractTestStep>> iteratorStack;
+	private Stack<Iterator<TestStep>> iteratorStack;
 
 	/**
 	 * Constructor for the test harness class
@@ -67,6 +66,7 @@ public class TestHarnessImpl implements TestHarness {
 			}
 		}
 		this.context = new TestHarnessContext();
+		this.context.setTestHarness(this);
 		this.context.setEnvironmentalProperties(environmentProperties);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Environment properties set to: ");
@@ -94,7 +94,7 @@ public class TestHarnessImpl implements TestHarness {
 		this.context.setTestCaseName(testCaseName);
 		this.testCase = this.testCaseLoader.loadTestCase(testCaseName, this);
 		// We use a stack to allow delegation
-		iteratorStack = new Stack<Iterator<AbstractTestStep>>();
+		iteratorStack = new Stack<Iterator<TestStep>>();
 		iteratorStack.push(this.testCase.iterator());
 
 		logger.debug("Loaded testcase: " + this.testCase.getTestCaseName());
@@ -112,7 +112,7 @@ public class TestHarnessImpl implements TestHarness {
 	public boolean runTests() {
 		logger.info("Running test steps");
 
-		Iterator<AbstractTestStep> currentTestStepIterator;
+		Iterator<TestStep> currentTestStepIterator;
 		
 		
 		

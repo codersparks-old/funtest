@@ -61,7 +61,6 @@ public class DelegateTestStep extends AbstractTestStep {
 			return testResult;
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			this.testResult.logFailure(e);
 			return testResult;
 		}

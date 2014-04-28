@@ -19,7 +19,7 @@ public class ConsoleOutputter implements OutputAdapter {
 	 */
 	@Override
 	public void handleResults(List<funtest.testharness.core.result.TestResult> results, TestHarness testHarness) {
-		// TODO Auto-generated method stub
+		
 
 	}
 

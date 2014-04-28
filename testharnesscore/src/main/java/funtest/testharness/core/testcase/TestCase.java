@@ -1,6 +1,6 @@
 package funtest.testharness.core.testcase;
 
-import funtest.testharness.core.teststep.AbstractTestStep;
+import funtest.testharness.core.teststep.TestStep;
 
 /**
  * Test case provides an implementation of the iterable interface that iterates
@@ -9,7 +9,7 @@ import funtest.testharness.core.teststep.AbstractTestStep;
  * @author codersparks
  * 
  */
-public interface TestCase extends Iterable<AbstractTestStep> {
+public interface TestCase extends Iterable<TestStep> {
 
 	public String getTestCaseName();
 }

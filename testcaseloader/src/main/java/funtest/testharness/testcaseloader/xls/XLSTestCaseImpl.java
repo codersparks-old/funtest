@@ -21,7 +21,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import funtest.testharness.core.TestHarness;
 import funtest.testharness.core.exception.TestHarnessException;
 import funtest.testharness.core.testcase.TestCase;
-import funtest.testharness.core.teststep.AbstractTestStep;
+import funtest.testharness.core.teststep.TestStep;
 
 public class XLSTestCaseImpl implements TestCase {
 
@@ -101,9 +101,8 @@ public class XLSTestCaseImpl implements TestCase {
 	}
 
 	@Override
-	public Iterator<AbstractTestStep> iterator() {
-		// TODO Auto-generated method stub
-		return new Iterator<AbstractTestStep>() {
+	public Iterator<TestStep> iterator() {
+		return new Iterator<TestStep>() {
 
 			int lastRowNumber = sheet.getLastRowNum();
 			int rowIndex = 1;
@@ -119,11 +118,11 @@ public class XLSTestCaseImpl implements TestCase {
 			}
 
 			@Override
-			public AbstractTestStep next() {
-				AbstractTestStep testStep;
+			public TestStep next() {
+				TestStep testStep;
 				try {
 
-					// TODO Auto-generated method stub
+					
 					Row row = sheet.getRow(rowIndex);
 
 					String alias = null;
@@ -159,8 +158,8 @@ public class XLSTestCaseImpl implements TestCase {
 								"Alias not set for row: " + rowIndex);
 					}
 
-					if (AbstractTestStep.class.isAssignableFrom(testStepClass)) {
-						testStep = (AbstractTestStep) testStepClass
+					if (TestStep.class.isAssignableFrom(testStepClass)) {
+						testStep = (TestStep) testStepClass
 								.getDeclaredConstructor(String.class,
 										Properties.class, TestHarness.class)
 								.newInstance(alias, parameters, testHarness);
@@ -194,7 +193,7 @@ public class XLSTestCaseImpl implements TestCase {
 
 			@Override
 			public void remove() {
-				// TODO Auto-generated method stub
+				
 
 			}
 
@@ -203,7 +202,7 @@ public class XLSTestCaseImpl implements TestCase {
 
 	@Override
 	public String getTestCaseName() {
-		// TODO Auto-generated method stub
+		
 		return testCaseName;
 	}
 
