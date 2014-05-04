@@ -19,9 +19,8 @@ import funtest.testharness.core.teststep.AbstractTestStep;
  */
 public class MD5TestStep extends AbstractTestStep {
 
-	public MD5TestStep(String alias, Properties testStepProperties,
-			TestHarnessContext context) {
-		super(alias, testStepProperties, context);
+	public MD5TestStep() {
+		super();
 	}
 
 	/**

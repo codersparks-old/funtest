@@ -1,5 +1,6 @@
 package funtest.testharness;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,7 +35,7 @@ public class TestHarnessImpl implements TestHarness {
 	private List<OutputAdapter> outputAdaptors;
 	private Properties variables;
 	private TestHarnessContext context;
-	//private Properties environmentProperties;
+	// private Properties environmentProperties;
 	private TestCase testCase;
 	private Stack<Iterator<TestStep>> iteratorStack;
 
@@ -65,12 +66,12 @@ public class TestHarnessImpl implements TestHarness {
 						+ this.variables.getProperty(name));
 			}
 		}
-		this.context = new TestHarnessContext();
-		this.context.setTestHarness(this);
+		this.context = new TestHarnessContext(this);
 		this.context.setEnvironmentalProperties(environmentProperties);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Environment properties set to: ");
-			for (String name : this.context.getEnvironmentProperties().stringPropertyNames()) {
+			for (String name : this.context.getEnvironmentProperties()
+					.stringPropertyNames()) {
 				logger.debug("\t=> " + name + ": "
 						+ this.context.getEnvironmentProperty(name));
 			}
@@ -82,7 +83,8 @@ public class TestHarnessImpl implements TestHarness {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * funtest.testharness.core.TestHarnessInterface#loadTestCase(java.lang.String)
+	 * funtest.testharness.core.TestHarnessInterface#loadTestCase(java.lang.
+	 * String)
 	 */
 	/**
 	 * {@inheritDoc}
@@ -113,11 +115,11 @@ public class TestHarnessImpl implements TestHarness {
 		logger.info("Running test steps");
 
 		Iterator<TestStep> currentTestStepIterator;
-		
-		
-		
-		String continueOnFailureProperty = context.getEnvironmentProperty("continueonfailure");
-		boolean continueOnFailure = Boolean.parseBoolean(continueOnFailureProperty);
+
+		String continueOnFailureProperty = context
+				.getEnvironmentProperty("continueonfailure");
+		boolean continueOnFailure = Boolean
+				.parseBoolean(continueOnFailureProperty);
 
 		while (!iteratorStack.empty()) {
 			currentTestStepIterator = iteratorStack.peek();
@@ -132,7 +134,27 @@ public class TestHarnessImpl implements TestHarness {
 							+ adapter.getClass().getName());
 					adapter.handleResult(result, this);
 				}
-				if(! (continueOnFailure || result.isPassed())) {
+
+				// We need to see if the test step has set a property called
+				// continueonfailure
+				boolean testStepContinueOnFailure = false;
+				try {
+					String testStepContinueOnFailureProperty = testStep
+							.getProperty("continueonfailure");
+
+					if (testStepContinueOnFailureProperty != null) {
+						testStepContinueOnFailure = Boolean
+								.parseBoolean(testStepContinueOnFailureProperty);
+					}
+				} catch (IOException e) {
+					logger.warn(
+							"IOException caught when trying to parse test step properties for continue on failure parameter, assuming false",
+							e);
+					testStepContinueOnFailure = false;
+				}
+
+				if (!(continueOnFailure || testStepContinueOnFailure || result
+						.isPassed())) {
 					break;
 				}
 			} else {
@@ -160,21 +182,23 @@ public class TestHarnessImpl implements TestHarness {
 
 		return overallResult;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public void delegateToTestCase(String delegateTestCaseName, String delegateTestCaseLoader) throws TestHarnessException {
-		
+	public void delegateToTestCase(String delegateTestCaseName,
+			String delegateTestCaseLoader) throws TestHarnessException {
+
 		TestCaseLoader testCaseLoader;
-		if(delegateTestCaseLoader == null) {
+		if (delegateTestCaseLoader == null) {
 			testCaseLoader = this.testCaseLoader;
 		} else {
 			testCaseLoader = new TestCaseLoader(delegateTestCaseLoader);
 		}
-		
-		TestCase testCase = testCaseLoader.loadTestCase(delegateTestCaseName, this);
-		
+
+		TestCase testCase = testCaseLoader.loadTestCase(delegateTestCaseName,
+				this);
+
 		this.iteratorStack.push(testCase.iterator());
 	}
 
@@ -182,8 +206,8 @@ public class TestHarnessImpl implements TestHarness {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * funtest.testharness.core.TestHarnessInterface#setVariable(java.lang.String,
-	 * java.lang.String)
+	 * funtest.testharness.core.TestHarnessInterface#setVariable(java.lang.String
+	 * , java.lang.String)
 	 */
 	/**
 	 * {@inheritDoc}
@@ -197,7 +221,8 @@ public class TestHarnessImpl implements TestHarness {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * funtest.testharness.core.TestHarnessInterface#getVariable(java.lang.String)
+	 * funtest.testharness.core.TestHarnessInterface#getVariable(java.lang.String
+	 * )
 	 */
 	/**
 	 * {@inheritDoc}
@@ -211,8 +236,8 @@ public class TestHarnessImpl implements TestHarness {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * funtest.testharness.core.TestHarnessInterface#addVariables(java.util.Properties
-	 * )
+	 * funtest.testharness.core.TestHarnessInterface#addVariables(java.util.
+	 * Properties )
 	 */
 	/**
 	 * {@inheritDoc}
@@ -268,9 +293,8 @@ public class TestHarnessImpl implements TestHarness {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * funtest.testharness.core.TestHarnessInterface#addOutputter(funtest.testharness
-	 * .core.core.outputter.OutputAdapter)
+	 * @see funtest.testharness.core.TestHarnessInterface#addOutputter(funtest.
+	 * testharness .core.core.outputter.OutputAdapter)
 	 */
 	/**
 	 * {@inheritDoc}

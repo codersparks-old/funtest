@@ -20,9 +20,10 @@ public class TestHarnessContext {
 
 	private Properties environmentalProperties = null;
 	private String testCaseName;
-	private TestHarness testHarness;
+	private final TestHarness testHarness;
 
-	public TestHarnessContext() {
+	public TestHarnessContext(TestHarness testHarness) {
+		this.testHarness = testHarness;
 		this.environmentalProperties = new Properties();
 	}
 
@@ -89,15 +90,6 @@ public class TestHarnessContext {
 		this.testCaseName = testCaseName;
 	}
 
-	/**
-	 * Get the test harness running the test
-	 * 
-	 * @param harness
-	 *            The test harness implementation
-	 */
-	public void setTestHarness(TestHarness harness) {
-		this.testHarness = harness;
-	}
 
 	/**
 	 * <p>

@@ -18,9 +18,8 @@ import funtest.testharness.core.teststep.AbstractTestStep;
  */
 public class SCPTestStep extends AbstractTestStep {
 
-	public SCPTestStep(String alias, Properties testStepProperties,
-			TestHarnessContext context) {
-		super(alias, testStepProperties, context);
+	public SCPTestStep() {
+		super();
 	}
 
 	/**

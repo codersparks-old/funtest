@@ -17,9 +17,8 @@ import funtest.testharness.core.teststep.AbstractTestStep;
  */
 public class SSHTestStep extends AbstractTestStep {
 
-	public SSHTestStep(String alias, Properties testStepProperties,
-			TestHarnessContext context) {
-		super(alias, testStepProperties, context);
+	public SSHTestStep() {
+		super();
 
 	}
 

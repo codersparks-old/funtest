@@ -18,17 +18,18 @@ public interface TestStep {
 	/**
 	 * The configure method allow the loader of the {@link TestStep} to
 	 * configure the teststep
-	 * 
+	 * @param alias The alias that will be use for this test step
+	 * @param context The {@link TestHarnessContext} used to configure the test step
 	 * @param propeties
 	 *            The {@link Properties} object that contains the required
 	 *            parameters to configure the {@link TestStep}
 	 */
-	public void configure(Properties propeties);
+	public void configure(String alias, TestHarnessContext context, Properties propeties);
 
 	/**
 	 * <p>
 	 * A test step is configured using a {@link Properties} object specified via
-	 * the {@link #configure(Properties)} method.
+	 * the {@link #configure(String, TestHarnessContext, Properties)} method.
 	 * 
 	 * <p>
 	 * This method allows access to the property defined in the supplied
@@ -62,7 +63,7 @@ public interface TestStep {
 	 * 
 	 * @param context The {@link TestHarnessContext} to use
 	 */
-	public void setTestHarnessContext(TestHarnessContext context);
+	public void setContext(TestHarnessContext context);
 
 	/**
 	 * Abstract function that all implementing classes specify that is called

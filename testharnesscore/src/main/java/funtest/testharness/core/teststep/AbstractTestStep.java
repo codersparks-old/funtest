@@ -32,52 +32,41 @@ public abstract class AbstractTestStep implements TestStep {
 
 	protected static Log logger = LogFactory.getLog(AbstractTestStep.class);
 
-	protected Properties properties;
-	protected String alias;
-	protected TestResult testResult;
-	protected TestHarnessContext context;
+	protected Properties properties = null;
+	protected String alias = null;
+	protected TestResult testResult = null;
+	protected TestHarnessContext context = null;
 
 	/**
-	 * The constructor for the TestStep
-	 * 
-	 * @param alias
-	 *            The alias of the test step (allows a descriptive name to be
-	 *            given for the test step)
-	 * @param testStepProperties
-	 *            Configuration properties for the test step
-	 * @param context
-	 *            The {@link TestHarnessContext} for the TestHarness running the
-	 *            test case
+	 * The harness is designed to call the default constructor which has no parameters
 	 */
-	public AbstractTestStep(String alias, Properties testStepProperties,
-			TestHarnessContext context) {
-		String type = this.getClass().getName();
-		this.setAlias(alias);
-		logger.info("Start of constructor for alias: " + this.alias + " type: "
-				+ type);
-		this.configure(testStepProperties);
-
-		logger.debug("Creating test result for: " + alias);
-		this.testResult = new TestResult(this.alias, type);
-
-		this.context = context;
-
-		logger.info("End of constructor for: " + alias);
+	public AbstractTestStep() {
+		
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void configure(Properties testStepProperties) {
+	public void configure(String alias, TestHarnessContext context, Properties testStepProperties) {
+		
+		// Set the alias 
+		this.setAlias(alias);
+		
+		// Set the context
+		this.setContext(context);
+		
 		this.properties = testStepProperties;
 		if (logger.isDebugEnabled()) {
-			logger.debug("Properties set for: " + this.alias + " values: ");
+			logger.debug("Properties set for: " + alias + " values: ");
 			for (String name : this.properties.stringPropertyNames()) {
 				logger.debug("\t=> " + name + ": '"
 						+ this.properties.getProperty(name) + "'");
 			}
 		}
+		
+		// Construct the test result that will store the result for the test step
+		this.testResult = new TestResult(getAlias(), this.getClass().getCanonicalName());
 	}
 
 	/**
@@ -130,7 +119,7 @@ public abstract class AbstractTestStep implements TestStep {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setTestHarnessContext(TestHarnessContext context) {
+	public void setContext(TestHarnessContext context) {
 		this.context = context;
 	}
 

@@ -28,8 +28,6 @@ public class XmlLauncher {
 		String testCaseName = "test.variablesdelegate";
 		
 
-		// TestCaseLoader loader = new TestCaseLoader(
-		// "testharness.testcase.XMLTestCaseFactory");
 		TestCaseLoader loader = new TestCaseLoader(
 				"funtest.testharness.testcaseloader.xml.XMLTestCaseFactory");
 		Properties variables = new Properties();

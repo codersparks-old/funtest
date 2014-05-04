@@ -36,9 +36,8 @@ import funtest.testharness.core.teststep.AbstractTestStep;
  */
 public class DelegateTestStep extends AbstractTestStep {
 
-	public DelegateTestStep(String alias, Properties testStepProperties,
-			TestHarnessContext context) {
-		super(alias, testStepProperties, context);
+	public DelegateTestStep() {
+		super();
 	}
 
 	@Override

@@ -38,9 +38,8 @@ import funtest.testharness.core.teststep.AbstractTestStep;
  */
 public class VariablesDebugTestStep extends AbstractTestStep {
 
-	public VariablesDebugTestStep(String alias, Properties testStepProperties,
-			TestHarnessContext context) {
-		super(alias, testStepProperties, context);
+	public VariablesDebugTestStep() {
+		super();
 
 	}
 
