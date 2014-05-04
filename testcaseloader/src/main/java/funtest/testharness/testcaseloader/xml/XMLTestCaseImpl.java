@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.swing.text.AbstractDocument.AttributeContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -43,11 +44,12 @@ public class XMLTestCaseImpl implements TestCase {
 
 	private final String testCaseName;
 	private final TestHarness testHarness;
-	XPathExpression configXPath;
-	XPathExpression actionXPath;
-	XPathExpression aliasXPath;
-	NodeList testStepNodeList;
-	DocumentBuilder dBuilder;
+	private XPathExpression configXPath;
+	private XPathExpression actionXPath;
+	private XPathExpression aliasXPath;
+	private XPathExpression attributeConfigXPath;
+	private NodeList testStepNodeList;
+	private DocumentBuilder dBuilder;
 
 	public XMLTestCaseImpl(String testCaseName, TestHarness testHarness)
 			throws TestHarnessException {
@@ -119,6 +121,16 @@ public class XMLTestCaseImpl implements TestCase {
 						testStepProperties.setProperty(name, value);
 					}
 					
+					// Now we add all attribute values to the config map
+					NodeList attributeConfigNodes = (NodeList) attributeConfigXPath.evaluate(nodeDoc, XPathConstants.NODESET);
+					for(int j = 0; j < attributeConfigNodes.getLength(); j++) {
+						Node attributeConfigNode = attributeConfigNodes.item(j);
+						
+						String name = attributeConfigNode.getNodeName();
+						String value = attributeConfigNode.getTextContent();
+						testStepProperties.setProperty(name, value);
+					}
+					
 					String className = classMap.get(actionString.toLowerCase());
 
 					if(null == className) {
@@ -138,10 +150,11 @@ public class XMLTestCaseImpl implements TestCase {
 					
 
 					if (TestStep.class.isAssignableFrom(clazz)) {
+						
 						testStep = (TestStep) clazz.getDeclaredConstructor(
-								String.class, Properties.class,
-								TestHarness.class).newInstance(aliasString,
-								testStepProperties, testHarness);
+								).newInstance();
+						
+						testStep.configure(aliasString, testHarness.getContext(), testStepProperties);
 
 					} else {
 						throw new TestHarnessException(
@@ -233,6 +246,7 @@ public class XMLTestCaseImpl implements TestCase {
 			logger.debug("Node count: " + testStepNodeList.getLength());
 
 			configXPath = xpathFactory.newXPath().compile("/teststep/*");
+			attributeConfigXPath = xpathFactory.newXPath().compile("/teststep/@");
 			actionXPath = xpathFactory.newXPath().compile("/teststep/@action");
 			aliasXPath = xpathFactory.newXPath().compile("/teststep/@alias");
 
