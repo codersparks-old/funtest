@@ -20,7 +20,7 @@ There are two special branches
 Building
 --------
 
-Each project has its own POM and therefore MAVEN can be used to build the jars. To build all jars at once see TestHarnessBuild project below
+Each project has its own POM and therefore MAVEN can be used to build the jars. To build all jars at once run the relevant goal (e.g. mvn install) in the repository root directory.
 
 --------------------------------
 
@@ -62,10 +62,6 @@ Contains the instances of the TestStep interface that the harness uses to run th
 ### TestHarness-all
 
 A project to hold a POM file to build a jar that contains all components of the above libraries
-
-### TestHarnessBuild
-
-A project to hold a POM file that is used to build all of the sub projects in the correct order. To build just run maven goal install on this project - This will install the built jars to your local repository
 
 --------------------------------
 
