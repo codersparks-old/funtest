@@ -30,7 +30,7 @@ public class XLSTestCaseImpl implements TestCase {
 	// Column maps (starting from 0)
 	private static final int ALIAS_COL = 0;
 	private static final int ACTION_COL = 1;
-	//private static final int PROPERY_START_COL = 2;
+	// private static final int PROPERY_START_COL = 2;
 
 	private Sheet sheet;
 	Map<Integer, String> headerMap;
@@ -122,7 +122,6 @@ public class XLSTestCaseImpl implements TestCase {
 				TestStep testStep;
 				try {
 
-					
 					Row row = sheet.getRow(rowIndex);
 
 					String alias = null;
@@ -160,9 +159,9 @@ public class XLSTestCaseImpl implements TestCase {
 
 					if (TestStep.class.isAssignableFrom(testStepClass)) {
 						testStep = (TestStep) testStepClass
-								.getDeclaredConstructor(String.class,
-										Properties.class, TestHarness.class)
-								.newInstance(alias, parameters, testHarness);
+								.getDeclaredConstructor().newInstance();
+						testStep.configure(alias, testHarness.getContext(),
+								parameters);
 					} else {
 						throw new TestHarnessException(
 								"Cannot create TestStep class");
@@ -193,7 +192,6 @@ public class XLSTestCaseImpl implements TestCase {
 
 			@Override
 			public void remove() {
-				
 
 			}
 
@@ -202,7 +200,7 @@ public class XLSTestCaseImpl implements TestCase {
 
 	@Override
 	public String getTestCaseName() {
-		
+
 		return testCaseName;
 	}
 
