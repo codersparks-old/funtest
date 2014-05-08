@@ -22,6 +22,7 @@ import funtest.testharness.core.TestHarness;
 import funtest.testharness.core.exception.TestHarnessException;
 import funtest.testharness.core.testcase.TestCase;
 import funtest.testharness.core.teststep.TestStep;
+import funtest.testharness.testcaseloader.generic.TestStepFactory;
 
 public class XLSTestCaseImpl implements TestCase {
 
@@ -37,6 +38,8 @@ public class XLSTestCaseImpl implements TestCase {
 
 	private TestHarness testHarness;
 	private String testCaseName;
+
+	private TestStepFactory testStepFactory = TestStepFactory.getInstance();
 
 	public XLSTestCaseImpl(String testCaseName, TestHarness testHarness)
 			throws TestHarnessException {
@@ -125,7 +128,7 @@ public class XLSTestCaseImpl implements TestCase {
 					Row row = sheet.getRow(rowIndex);
 
 					String alias = null;
-					Class<?> testStepClass = null;
+					String action = null;
 
 					Properties parameters = new Properties();
 
@@ -134,12 +137,8 @@ public class XLSTestCaseImpl implements TestCase {
 						if (colNo == ALIAS_COL) {
 							alias = row.getCell(colNo).getStringCellValue();
 						} else if (colNo == ACTION_COL) {
-							testStepClass = this
-									.getClass()
-									.getClassLoader()
-									.loadClass(
-											row.getCell(colNo)
-													.getStringCellValue());
+							action = row.getCell(colNo)
+													.getStringCellValue();
 						} else {
 							String name = headerMap.get(colNo);
 
@@ -152,19 +151,22 @@ public class XLSTestCaseImpl implements TestCase {
 						}
 					}
 
-					if (alias == null || alias.length() == 0) {
+					if (alias == null || alias.trim().length() == 0) {
 						throw new TestHarnessException(
 								"Alias not set for row: " + rowIndex);
 					}
+					
+					if (action == null || action.trim().length() == 0) {
+						throw new TestHarnessException("Action not set for row: " + rowIndex);
+					}
 
-					if (TestStep.class.isAssignableFrom(testStepClass)) {
-						testStep = (TestStep) testStepClass
-								.getDeclaredConstructor().newInstance();
+					try {
+						testStep = testStepFactory.newTestStep(action);
 						testStep.configure(alias, testHarness.getContext(),
 								parameters);
-					} else {
+					} catch (Exception e) {
 						throw new TestHarnessException(
-								"Cannot create TestStep class");
+								"Cannot create TestStep class for action: " + action, e);
 					}
 				} catch (Exception e) {
 					logger.error("Exception of type: "
