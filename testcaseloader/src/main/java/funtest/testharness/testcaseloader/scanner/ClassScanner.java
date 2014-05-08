@@ -1,6 +1,5 @@
 package funtest.testharness.testcaseloader.scanner;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +34,17 @@ public class ClassScanner extends TestStepScanner {
 		scan();
 	}
 
+	/**
+	 * Returns a Class that implements TestStep and handles the provided action
+	 * 
+	 * @param action
+	 *            the action to find a TestStep against
+	 * 
+	 * @return A class representing a subtype of TestStep
+	 * 
+	 * @throws NoSuchTestStepException
+	 *             if no TestStep can be found for the provided action
+	 */
 	public Class<? extends TestStep> clazzForAction(String action)
 			throws NoSuchTestStepException {
 		if (this.testStepMap.containsKey(action)) {
@@ -47,6 +57,18 @@ public class ClassScanner extends TestStepScanner {
 				"Unable to find TestStep Class for action: " + action);
 	}
 
+	/**
+	 * <p>
+	 * Method that scans the Java classpath for any classes that are a sub-type
+	 * of {@link TestStep} and are annotated with {@link Action}
+	 * </p>
+	 * 
+	 * <p>
+	 * Any matched classes are added to a Map with the corresponding action as
+	 * the key, this allows direct lookups for the life of this class without
+	 * having to rescan the classpath again
+	 * </p>
+	 */
 	@Override
 	protected void scan() throws TestActionException {
 
@@ -67,7 +89,7 @@ public class ClassScanner extends TestStepScanner {
 										+ clazz.getName()
 										+ " has null or empty value for @Action annotation");
 					}
-					
+
 					this.testStepMap.put(action, clazz);
 				}
 
