@@ -2,10 +2,10 @@ package funtest.testharness.teststep.ssh;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
 
 import funtest.helperlibrary.helper.ssh.SCPHelper;
-import funtest.testharness.core.TestHarnessContext;
+import funtest.testharness.core.annotations.Action;
+import funtest.testharness.core.annotations.ActionMethod;
 import funtest.testharness.core.result.TestResult;
 import funtest.testharness.core.teststep.AbstractTestStep;
 
@@ -16,6 +16,7 @@ import funtest.testharness.core.teststep.AbstractTestStep;
  * @author codersparks
  * 
  */
+@Action("scp")
 public class SCPTestStep extends AbstractTestStep {
 
 	public SCPTestStep() {
@@ -23,9 +24,9 @@ public class SCPTestStep extends AbstractTestStep {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Method to run for action: "scp"
 	 */
-	@Override
+	@ActionMethod("scp")
 	public TestResult runTestStep() {
 		this.testResult.logMessage("Running test step: " + alias + " Type: "
 				+ this.getClass().getName());
