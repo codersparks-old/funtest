@@ -6,6 +6,8 @@ import java.util.Properties;
 import funtest.helperlibrary.helper.ssh.SSHHelper;
 import funtest.helperlibrary.util.process.ProcessResult;
 import funtest.testharness.core.TestHarnessContext;
+import funtest.testharness.core.annotations.Action;
+import funtest.testharness.core.annotations.ActionMethod;
 import funtest.testharness.core.result.TestResult;
 import funtest.testharness.core.teststep.AbstractTestStep;
 
@@ -15,6 +17,7 @@ import funtest.testharness.core.teststep.AbstractTestStep;
  * @author codersparks
  * 
  */
+@Action("ssh")
 public class SSHTestStep extends AbstractTestStep {
 
 	public SSHTestStep() {
@@ -22,7 +25,11 @@ public class SSHTestStep extends AbstractTestStep {
 
 	}
 
-	@Override
+	/**
+	 * Method to run for action: "ssh"
+	 * @return
+	 */
+	@ActionMethod("ssh")
 	public TestResult runTestStep() {
 		this.testResult.logMessage("Running test step: " + alias + " Type: "
 				+ this.getClass().getName());

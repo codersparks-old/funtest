@@ -123,9 +123,4 @@ public abstract class AbstractTestStep implements TestStep {
 		this.context = context;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public abstract TestResult runTestStep();
 }

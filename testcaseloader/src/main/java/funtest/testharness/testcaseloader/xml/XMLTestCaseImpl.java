@@ -25,22 +25,29 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import funtest.testharness.core.TestHarness;
+import funtest.testharness.core.TestHarnessContext;
 import funtest.testharness.core.exception.TestHarnessException;
 import funtest.testharness.core.testcase.TestCase;
 import funtest.testharness.core.teststep.TestStep;
+import funtest.testharness.testcaseloader.generic.TestStepFactory;
 
 public class XMLTestCaseImpl implements TestCase {
 
-	private static Map<String, String> classMap = new HashMap<String, String>();
 	private static Log logger = LogFactory.getLog(XMLTestCaseImpl.class);
 
-	static {
-		classMap.put("ssh", "funtest.testharness.teststep.ssh.SSHTestStep");
-		classMap.put("scp", "funtest.testharness.teststep.ssh.SCPTestStep");
-		classMap.put("md5", "funtest.testharness.teststep.hash.MD5TestStep");
-		classMap.put("delegate", "funtest.testharness.teststep.DelegateTestStep");
-		classMap.put("variabledebug", "funtest.testharness.teststep.VariablesDebugTestStep");
-	}
+	/*
+	 * private static Map<String, String> classMap = new HashMap<String,
+	 * String>();
+	 * 
+	 * static { classMap.put("ssh",
+	 * "funtest.testharness.teststep.ssh.SSHTestStep"); classMap.put("scp",
+	 * "funtest.testharness.teststep.ssh.SCPTestStep"); classMap.put("md5",
+	 * "funtest.testharness.teststep.hash.MD5TestStep");
+	 * classMap.put("delegate",
+	 * "funtest.testharness.teststep.DelegateTestStep");
+	 * classMap.put("variabledebug",
+	 * "funtest.testharness.teststep.VariablesDebugTestStep"); }
+	 */
 
 	private final String testCaseName;
 	private final TestHarness testHarness;
@@ -50,6 +57,8 @@ public class XMLTestCaseImpl implements TestCase {
 	private XPathExpression attributeConfigXPath;
 	private NodeList testStepNodeList;
 	private DocumentBuilder dBuilder;
+
+	private TestStepFactory testStepFactory;
 
 	public XMLTestCaseImpl(String testCaseName, TestHarness testHarness)
 			throws TestHarnessException {
@@ -69,7 +78,7 @@ public class XMLTestCaseImpl implements TestCase {
 
 	@Override
 	public Iterator<TestStep> iterator() {
-		
+
 		return new Iterator<TestStep>() {
 
 			int index = 0;
@@ -120,46 +129,28 @@ public class XMLTestCaseImpl implements TestCase {
 						// value);
 						testStepProperties.setProperty(name, value);
 					}
-					
+
 					// Now we add all attribute values to the config map
-					NodeList attributeConfigNodes = (NodeList) attributeConfigXPath.evaluate(nodeDoc, XPathConstants.NODESET);
-					for(int j = 0; j < attributeConfigNodes.getLength(); j++) {
+					NodeList attributeConfigNodes = (NodeList) attributeConfigXPath
+							.evaluate(nodeDoc, XPathConstants.NODESET);
+					for (int j = 0; j < attributeConfigNodes.getLength(); j++) {
 						Node attributeConfigNode = attributeConfigNodes.item(j);
-						
+
 						String name = attributeConfigNode.getNodeName();
 						String value = attributeConfigNode.getTextContent();
 						testStepProperties.setProperty(name, value);
 					}
-					
-					String className = classMap.get(actionString.toLowerCase());
 
-					if(null == className) {
-						logger.error("Classmap does not contain action: " + actionString);
-						if(logger.isDebugEnabled()) {
-							logger.debug("Available actions: ");
-							for(String classMapKey : classMap.keySet()) {
-								logger.debug("\t=> " + classMapKey + " loads class: " + classMap.get(classMapKey));
-							}
-						}
-						throw new TestHarnessException("Cannot find class for action: " + actionString);
-					}
-					
-					Class<?> clazz = this.getClass().getClassLoader()
-							.loadClass(className);
-					
-					
+					try {
+						testStep = testStepFactory.newTestStep(actionString
+								.toLowerCase());
 
-					if (TestStep.class.isAssignableFrom(clazz)) {
-						
-						testStep = (TestStep) clazz.getDeclaredConstructor(
-								).newInstance();
-						
 						testStep.configure(aliasString, testHarness.getContext(), testStepProperties);
-
-					} else {
+						
+					} catch (Exception e) {
 						throw new TestHarnessException(
 								"Cannot load class using action: "
-										+ actionString);
+										+ actionString, e);
 					}
 
 				} catch (Exception e) {
@@ -207,8 +198,8 @@ public class XMLTestCaseImpl implements TestCase {
 
 		String scriptsBaseDirectory = testHarness.getContext()
 				.getEnvironmentProperty("scriptsDir");
-		//String schemaLocation = testHarness
-		//		.getEnvironmentProperty("schemaLocation");
+		// String schemaLocation = testHarness
+		// .getEnvironmentProperty("schemaLocation");
 		String workingDirectory = testHarness.getContext()
 				.getEnvironmentProperty("workingDir");
 
@@ -246,9 +237,12 @@ public class XMLTestCaseImpl implements TestCase {
 			logger.debug("Node count: " + testStepNodeList.getLength());
 
 			configXPath = xpathFactory.newXPath().compile("/teststep/*");
-			attributeConfigXPath = xpathFactory.newXPath().compile("/teststep/@");
+			attributeConfigXPath = xpathFactory.newXPath().compile(
+					"/teststep/@");
 			actionXPath = xpathFactory.newXPath().compile("/teststep/@action");
 			aliasXPath = xpathFactory.newXPath().compile("/teststep/@alias");
+
+			this.testStepFactory = TestStepFactory.getInstance();
 
 			/*
 			 * for (int i = 0; i < testStepNodes.getLength(); i++) {

@@ -3,10 +3,10 @@ package funtest.testharness.teststep.hash;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Properties;
 
 import funtest.helperlibrary.helper.hash.FileHashHelper;
-import funtest.testharness.core.TestHarnessContext;
+import funtest.testharness.core.annotations.Action;
+import funtest.testharness.core.annotations.ActionMethod;
 import funtest.testharness.core.result.TestResult;
 import funtest.testharness.core.teststep.AbstractTestStep;
 
@@ -17,6 +17,7 @@ import funtest.testharness.core.teststep.AbstractTestStep;
  * @author codersparks
  * 
  */
+@Action("md5")
 public class MD5TestStep extends AbstractTestStep {
 
 	public MD5TestStep() {
@@ -24,9 +25,9 @@ public class MD5TestStep extends AbstractTestStep {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Method to run for action: "md5"
 	 */
-	@Override
+	@ActionMethod("md5")
 	public TestResult runTestStep() {
 		this.testResult.logMessage("Running test step: " + alias + " Type: "
 				+ this.getClass().getName());
